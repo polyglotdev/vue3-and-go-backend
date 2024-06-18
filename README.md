@@ -42,6 +42,7 @@ go run cmd/api/main.go
 - User login endpoint
 - JSON response formatting
 - Error handling
+- Database connection
 
 ## Contributing
 
