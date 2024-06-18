@@ -42,10 +42,7 @@ go run cmd/api/main.go
 - User login endpoint
 - JSON response formatting
 - Error handling
-
-## Contributing
-
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
+- Database connection
 
 ## License
 
