@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"os/user"
 	"time"
 )
 
@@ -13,7 +12,7 @@ import (
 //   - message: A string containing a message describing the result of the request.
 type jsonResponse struct {
 	// Error is a boolean indicating whether an error occurred during the request.
-	Error bool `json:"error"`
+			Error bool `json:"error"`
 	// Message is a string containing a message describing the result of the request.
 	Message string `json:"message"`
 
