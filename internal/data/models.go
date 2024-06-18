@@ -29,25 +29,32 @@ func New(dbPool *sql.DB) Models {
 	}
 }
 
-// Models is the type for this package. Note that any model that is included as a member
-// in this type is available to us throughout the application, anywhere that the
-// app variable is used, provided that the model is also added in the New function.
+// Models represents the data models for the application.
 type Models struct {
-	User  User
+	// User is the data model for a User.
+	User User
+	// Token is the data model for a Token.
 	Token Token
 }
 
-// User is the structure which holds one user from the database. Note
-// that it embeds a token type.
+// User represents a user in the database.
 type User struct {
-	ID        int       `json:"id"`
-	Email     string    `json:"email"`
-	FirstName string    `json:"first_name,omitempty"`
-	LastName  string    `json:"last_name,omitempty"`
-	Password  string    `json:"password"`
+	// ID is the primary key for the user.
+	ID int `json:"id"`
+	// Email is the email address for the user.
+	Email string `json:"email"`
+	// FirstName is the first name for the user.
+	FirstName string `json:"first_name,omitempty"`
+	// LastName is the last name for the user.
+	LastName string `json:"last_name,omitempty"`
+	// Password is the password for the user.
+	Password string `json:"password"`
+	// CreatedAt is the time the user was created.
 	CreatedAt time.Time `json:"created_at"`
+	// UpdatedAt is the time the user was last updated.
 	UpdatedAt time.Time `json:"updated_at"`
-	Token     Token     `json:"token"`
+	// Token is the token for the user.
+	Token Token `json:"token"`
 }
 
 // GetAll returns a slice of all users, sorted by last name
@@ -57,8 +64,8 @@ type User struct {
 // - none
 //
 // Returns:
-// - []*User
-// - error
+// - []*User: a slice of type User
+// - error: an error
 func (u *User) GetAll() ([]*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -102,8 +109,8 @@ func (u *User) GetAll() ([]*User, error) {
 //
 // Returns:
 //
-// - *User
-// - error
+// - *User: a pointer to the User model
+// - error: an error
 func (u *User) GetByEmail(email string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -130,7 +137,16 @@ func (u *User) GetByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-// GetOne returns one user by id
+// GetOne returns one user by id.
+//
+// Parameters:
+//
+// - id: int: the id of the user
+//
+// Returns:
+//
+// - *User: a pointer to the User model
+// - error: an error
 func (u *User) GetOne(id int) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -157,8 +173,15 @@ func (u *User) GetOne(id int) (*User, error) {
 	return &user, nil
 }
 
-// Update updates one user in the database, using the information
-// stored in the receiver u
+// Update updates one user in the database, using the information stored in the receiver u.
+//
+// Parameters:
+//
+// - none
+//
+// Returns:
+//
+// - error: an error
 func (u *User) Update() error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -186,7 +209,15 @@ func (u *User) Update() error {
 	return nil
 }
 
-// Delete deletes one user from the database, by ID
+// Delete deletes one user from the database, by ID.
+//
+// Parameters:
+//
+// - none
+//
+// Returns:
+//
+// - error: an error
 func (u *User) Delete() error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -201,7 +232,16 @@ func (u *User) Delete() error {
 	return nil
 }
 
-// Insert inserts a new user into the database, and returns the ID of the newly inserted row
+// Insert inserts a new user into the database, and returns the ID of the newly inserted row.
+//
+// Parameters:
+//
+// - user: User: the user to insert
+//
+// Returns:
+//
+// - int: the id of the newly inserted row
+// - error: an error
 func (u *User) Insert(user User) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -231,7 +271,15 @@ func (u *User) Insert(user User) (int, error) {
 	return newID, nil
 }
 
-// ResetPassword is the method we will use to change a user's password.
+// ResetPassword resets a user's password.
+//
+// Parameters:
+//
+// - password: string: the new password for the user
+//
+// Returns:
+//
+// - error: an error
 func (u *User) ResetPassword(password string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -250,9 +298,15 @@ func (u *User) ResetPassword(password string) error {
 	return nil
 }
 
-// PasswordMatches uses Go's bcrypt package to compare a user supplied password
-// with the hash we have stored for a given user in the database. If the password
-// and hash match, we return true; otherwise, we return false.
+// PasswordMatches uses Go's bcrypt package to compare a user supplied password with the hash we have stored for a given user in the database. If the password and hash match, we return true; otherwise, we return false.
+//
+// Parameters:
+//
+// - plainText: string: the plain text password to compare with the hash
+//
+// Returns:
+//
+// - bool: true if the password matches the hash, false otherwise
 func (u *User) PasswordMatches(plainText string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(plainText))
 
@@ -272,18 +326,33 @@ func (u *User) PasswordMatches(plainText string) (bool, error) {
 // Token is the data structure for any token in the database. Note that
 // we do not send the TokenHash (a slice of bytes) in any exported JSON.
 type Token struct {
-	ID        int       `json:"id"`
-	UserID    int       `json:"user_id"`
-	Email     string    `json:"email"`
-	Token     string    `json:"token"`
-	TokenHash []byte    `json:"-"`
+	// ID is the primary key for the token.
+	ID int `json:"id"`
+	// UserID is the foreign key for the user.
+	UserID int `json:"user_id"`
+	// Email is the email address for the user.
+	Email string `json:"email"`
+	// Token is the token for the user.
+	Token string `json:"token"`
+	// TokenHash is the hash of the token.
+	TokenHash []byte `json:"-"`
+	// CreatedAt is the time the token was created.
 	CreatedAt time.Time `json:"created_at"`
+	// UpdatedAt is the time the token was last updated.
 	UpdatedAt time.Time `json:"updated_at"`
-	Expiry    time.Time `json:"expiry"`
+	// Expiry is the time the token expires.
+	Expiry time.Time `json:"expiry"`
 }
 
 // GetByToken takes a plain text token string, and looks up the full token from
 // the database. It returns a pointer to the Token model.
+//
+// Parameter:
+// - plainText: string: the plain text token to look up
+//
+// Returns:
+// - *Token: a pointer to the Token model
+// - error: an error
 func (t *Token) GetByToken(plainText string) (*Token, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -314,6 +383,13 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 
 // GetUserForToken takes a token parameter, and uses the UserID field from that parameter
 // to look a user up by id. It returns a pointer to the user model.
+//
+// Parameter:
+// - token: Token: the token to look up
+//
+// Returns:
+// - *User: a pointer to the User model
+// - error: an error
 func (t *Token) GetUserForToken(token Token) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -340,7 +416,15 @@ func (t *Token) GetUserForToken(token Token) (*User, error) {
 	return &user, nil
 }
 
-// GenerateToken generates a secure token of exactly 26 characters in length and returns it
+// GenerateToken generates a secure token of exactly 26 characters in length and returns it.
+//
+// Parameter:
+// - userID: int: the id of the user to generate the token for
+// - ttl: time.Duration: the time to live for the token
+//
+// Returns:
+// - *Token: a pointer to the Token model
+// - error: an error
 func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 	token := &Token{
 		UserID: userID,
@@ -360,10 +444,14 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 	return token, nil
 }
 
-// AuthenticateToken takes the full http request, extracts the authorization header,
-// takes the plain text token from that header and looks up the associated token entry
-// in the database, and then finds the user associated with that token. If the token
-// is valid and a user is found, the user is returned; otherwise, it returns an error.
+// AuthenticateToken takes the full http request, extracts the authorization header, takes the plain text token from that header and looks up the associated token entry in the database, and then finds the user associated with that token. If the token is valid and a user is found, the user is returned; otherwise, it returns an error.
+//
+// Parameter:
+// - r: *http.Request: the http request
+//
+// Returns:
+// - *User: a pointer to the User model
+// - error: an error
 func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	// get the authorization header
 	authorizationHeader := r.Header.Get("Authorization")
@@ -404,7 +492,14 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	return user, nil
 }
 
-// Insert inserts a token into the database
+// Insert inserts a token into the database.
+//
+// Parameter:
+// - token: Token: the token to insert
+// - u: User: the user to associate with the token
+//
+// Returns:
+// - error: an error
 func (t *Token) Insert(token Token, u User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -421,7 +516,7 @@ func (t *Token) Insert(token Token, u User) error {
 	token.Email = u.Email
 
 	// insert the new token
-	stmt = `insert into tokens (user_id, email, token, token_hash, created_at, updated_at, expiry
+	stmt = `insert into tokens (user_id, email, token, token_hash, created_at, updated_at, expiry)
 		values ($1, $2, $3, $4, $5, $6, $7)`
 
 	_, err = db.ExecContext(ctx, stmt,
@@ -440,7 +535,13 @@ func (t *Token) Insert(token Token, u User) error {
 	return nil
 }
 
-// DeleteByToken deletes a token, by plain text token
+// DeleteByToken deletes a token, by plain text token.
+//
+// Parameter:
+// - plainText: string: the plain text token to delete
+//
+// Returns:
+// - error: an error
 func (t *Token) DeleteByToken(plainText string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -455,9 +556,14 @@ func (t *Token) DeleteByToken(plainText string) error {
 	return nil
 }
 
-// ValidToken makes certain that a given token is valid; in order to be valid,
-// the token must exist in the database, the associated user must exist in the database,
-// and the token must not have expired.
+// ValidToken checks that a given token is valid; in order to be valid, the token must exist in the database, the associated user must exist in the database, and the token must not have expired.
+//
+// Parameter:
+// - plainText: string: the plain text token to check
+//
+// Returns:
+// - bool: true if the token is valid, false otherwise
+// - error: an error
 func (t *Token) ValidToken(plainText string) (bool, error) {
 	token, err := t.GetByToken(plainText)
 	if err != nil {
